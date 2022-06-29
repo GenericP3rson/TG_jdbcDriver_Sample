@@ -12,7 +12,7 @@ public class Connect {
 	Properties properties = new Properties();
 	properties.put("username", "tigergraph");
 	properties.put("password", "tigergraph");
-	properties.put("graph", "socialNet");
+	properties.put("graph", "AMLSim");
 
 	try {
 		com.tigergraph.jdbc.Driver driver = new Driver();
@@ -56,6 +56,36 @@ public class Connect {
 						}
 					}
 					} while (!rs.isLast());
+				}
+				query = "run interpreted(account_id=?)";
+				String query_body = "INTERPRET QUERY (STRING account_id) FOR GRAPH AMLSim {\n" +
+									"seed = {Account.*};\n" +
+									"S1 = SELECT s FROM seed:s WHERE s.id == account_id;\n" +
+									"PRINT S1;\n" + 
+									"}";
+				try (java.sql.PreparedStatement pstmt = con.prepareStatement(query)) {
+				pstmt.setString(1, "9913");
+				pstmt.setString(2, query_body); // The query body is passed as a parameter.
+				try (java.sql.ResultSet rs = pstmt.executeQuery()) {
+					do {
+					java.sql.ResultSetMetaData metaData = rs.getMetaData();
+					System.out.println("Table: " + metaData.getCatalogName(1));
+					System.out.print(metaData.getColumnName(1));
+					for (int i = 2; i <= metaData.getColumnCount(); ++i) {
+						System.out.print("\t" + metaData.getColumnName(i));
+					}
+					System.out.println("");
+					while (rs.next()) {
+						System.out.print(rs.getObject(1));
+						for (int i = 2; i <= metaData.getColumnCount(); ++i) {
+						Object obj = rs.getObject(i);
+						System.out.println("\t" + String.valueOf(obj));
+						}
+					}
+					} while (!rs.isLast());
+				}
+				} catch (SQLException e) {
+				System.out.println( "Failed to createStatement: " + e);
 				}
 			}
 		} catch (SQLException e) {System.out.println(e);}
