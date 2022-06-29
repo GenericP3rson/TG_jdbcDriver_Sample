@@ -1,6 +1,10 @@
 # TigerGraph JDBC Driver Sample Code
 
-Simple starting introduction to the TigerGraph JDBC Driver
+Sample code for using and executing the TigerGraph JDBC Driver for a Fraud Detection Graph
+
+## Overview
+
+This project is a sample repository on how to use the JDBC Driver to query the AMLSim graph. 
 
 ## Quickstart
 
